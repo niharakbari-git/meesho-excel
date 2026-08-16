@@ -1,0 +1,87 @@
+ROOT CAUSE ANALYSIS: WHY JSX ERRORS KEEP HAPPENING
+AND HOW TO FIX THEM PERMANENTLY
+====================================================
+
+
+1. WHAT ERRORS HAVE BEEN OCCURRING
+-----------------------------------------------------
+All errors have been the SAME class of bug:
+  [PARSE_ERROR] Expected , or ) but found {
+  [PARSE_ERROR] Unexpected token. Did you mean {'}'} or &rbrace;?
+
+These are JSX structure errors — mismatched or duplicate opening/closing tags.
+
+Files affected so far:
+  - CatalogueGenerator.tsx (line 230) — extra orphaned closing div
+  - BusinessProfile.tsx   (line 123) — two component trees accidentally merged
+
+
+2. ROOT CAUSE (WHY IT KEEPS HAPPENING)
+-----------------------------------------------------
+The eplace_file_content tool (partial replacement) is the culprit.
+
+When I use it on JSX files:
+  - The tool finds a target block inside the file and replaces it.
+  - If the target is slightly off, the new code gets INJECTED into the 
+    middle of existing code rather than replacing it.
+  - This leaves the old closing tags AND the new closing tags both present.
+  - Result: mismatched braces ? Vite parse error ? red screen.
+
+The tool even warned each time:
+  "You had inaccuracies in your replacement chunks..."
+But I proceeded anyway. That was the mistake.
+
+
+3. PERMANENT SOLUTION
+-----------------------------------------------------
+RULE 1: For JSX files (any .tsx with complex structure), 
+        ALWAYS use full file rewrite (write_to_file with Overwrite=true).
+        NEVER use partial replace on nested JSX.
+
+RULE 2: Partial replacements are only safe for:
+        - Backend .ts files (no JSX)
+        - CSS files
+        - Config files  
+        - Truly single-line changes
+
+RULE 3: After EVERY file change, run:
+        npx tsc --noEmit
+        and confirm exit code 0 before moving to the next file.
+
+
+4. WHAT I NEED FROM YOU (before implementing anything)
+-----------------------------------------------------
+Q1: The screenshot you sent (the tall image) — the text is too small to read.
+    Please either:
+    (a) Paste the error text directly in chat, OR
+    (b) Tell me which page was showing the error, OR
+    (c) Tell me what action you took right before the error appeared
+
+Q2: Are there any other pages that are currently broken/showing errors?
+
+Q3: Do you want me to do a proactive FULL AUDIT of all files right now?
+    This would read every component file, verify the JSX structure,
+    and rewrite any that look risky — before continuing with new features.
+
+
+5. CURRENT STATUS OF ALL FILES
+-----------------------------------------------------
+  OK  Layout.tsx              37 lines  - verified clean
+  OK  Dashboard.tsx           70 lines  - verified clean
+  OK  TemplateUploader.tsx    79 lines  - verified clean
+  OK  BusinessProfile.tsx     89 lines  - FIXED (full rewrite done)
+  OK  CatalogueGenerator.tsx 238 lines  - FIXED (orphan div removed)
+  OK  Preview.tsx             102 lines  - verified clean
+  OK  History.tsx             119 lines  - new file, written cleanly
+  !!  FieldConfigDialog.tsx  ~250 lines  - NOT audited yet (complex file, risky)
+
+TypeScript check: EXIT CODE 0 (all clear) as of last run.
+
+
+6. NEXT PATH FORWARD
+-----------------------------------------------------
+Step 1 ? You tell me what error the screenshot shows (or which page is broken)
+Step 2 ? I run a full audit of FieldConfigDialog.tsx (the one risky file left)
+Step 3 ? Full rewrite any file that has structural issues
+Step 4 ? Confirm tsc passes (exit code 0)
+Step 5 ? Continue building new features using safe write patterns

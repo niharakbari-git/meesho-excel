@@ -35,58 +35,54 @@ export default function BusinessProfile() {
   if (isLoading) return <div className="text-center p-10 text-slate-500">Loading profile...</div>;
 
   return (
-    <div className="max-w-3xl mx-auto bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
-      <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Business Profile</h2>
-      <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">GST Number</label>
-            <input {...register('gst')} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-fuchsia-500 outline-none transition" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Default HSN</label>
-            <input {...register('hsn')} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-fuchsia-500 outline-none transition" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Brand Name</label>
-            <input {...register('brand')} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-fuchsia-500 outline-none transition" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Manufacturer</label>
-            <input {...register('manufacturer')} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-fuchsia-500 outline-none transition" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Packer</label>
-            <input {...register('packer')} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-fuchsia-500 outline-none transition" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone</label>
-            <input {...register('phone')} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-fuchsia-500 outline-none transition" />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
-            <textarea {...register('address')} rows={3} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-fuchsia-500 outline-none transition" />
-          </div>
+    <div className="space-y-6 pb-20">
+      <div className="flex flex-col md:flex-row justify-between items-end mb-4">
+        <div>
+           <h2 className="text-3xl font-extrabold text-[#1c1950]">Business Profile</h2>
+           <p className="text-slate-500 mt-2 font-medium">Configure default GST, HSN, and Brand information for global fallbacks.</p>
         </div>
-        
-        <h3 className="text-lg font-semibold text-slate-800 dark:text-white mt-8 mb-4 border-b border-slate-200 dark:border-slate-800 pb-2">Generation Defaults</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Default Base Profit (₹)</label>
-            <input type="number" {...register('defaultProfit', { valueAsNumber: true })} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-fuchsia-500 outline-none transition" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Price Variation Range (±)</label>
-            <input type="number" {...register('defaultPriceVariation', { valueAsNumber: true })} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-fuchsia-500 outline-none transition" />
-          </div>
-        </div>
+      </div>
 
-        <div className="flex justify-end pt-4">
-          <button type="submit" disabled={mutation.isPending} className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-medium py-2 px-6 rounded-lg transition disabled:opacity-50">
-            {mutation.isPending ? 'Saving...' : 'Save Profile'}
-          </button>
-        </div>
-      </form>
+      <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+        <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex flex-col">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">GST Number</label>
+              <input {...register('gst')} className="px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 outline-none text-[#1c1950] font-semibold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition" />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Default HSN</label>
+              <input {...register('hsn')} className="px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 outline-none text-[#1c1950] font-semibold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition" />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Brand Name</label>
+              <input {...register('brand')} className="px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 outline-none text-[#1c1950] font-semibold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition" />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Manufacturer</label>
+              <input {...register('manufacturer')} className="px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 outline-none text-[#1c1950] font-semibold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition" />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Packer</label>
+              <input {...register('packer')} className="px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 outline-none text-[#1c1950] font-semibold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition" />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Phone</label>
+              <input {...register('phone')} className="px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 outline-none text-[#1c1950] font-semibold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition" />
+            </div>
+            <div className="md:col-span-2 flex flex-col">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Address</label>
+              <textarea {...register('address')} rows={3} className="px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 outline-none text-[#1c1950] font-semibold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition resize-none" />
+            </div>
+          </div>
+          
+          <div className="flex justify-end pt-6 border-t border-slate-100">
+            <button type="submit" disabled={mutation.isPending} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-md shadow-indigo-600/20 transition transform hover:-translate-y-0.5 disabled:opacity-50">
+              {mutation.isPending ? 'Saving...' : 'Save Profile'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

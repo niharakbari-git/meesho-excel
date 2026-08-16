@@ -13,13 +13,14 @@ export class TemplateController {
       }
       
       const parsed = await excelEngine.parseTemplate(req.file.path);
-      const analyzedFields = analysisEngine.classifyFields(parsed.columns);
+      const analyzedFields = await analysisEngine.classifyFields(parsed.columns);
 
       res.json({
         success: true,
         data: {
           sheetName: parsed.sheetName,
           headerRowIndex: parsed.headerRowIndex,
+          dataRowStart: parsed.dataRowStart,
           fields: analyzedFields,
           filePath: req.file.path // Save path for future generation step
         }

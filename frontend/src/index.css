@@ -1,12 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-meesho-pink: #f43397;
-  --color-meesho-dark: #333333;
+  --color-meesho-primary: #6366f1; /* Soft purple/indigo */
+  --color-meesho-primary-hover: #4f46e5;
+  --color-meesho-bg: #f8f7fb; /* Light lavender background */
+  --color-meesho-card: #ffffff;
+  --color-meesho-text: #1c1950; /* Navy text */
+  --color-meesho-text-muted: #64748b;
+  --color-meesho-border: #e2e8f0;
 }
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50;
+    @apply bg-[#f8f7fb] text-[#1c1950] font-sans antialiased selection:bg-indigo-100 selection:text-indigo-900;
   }
+}
+
+/* Base card styling */
+.glass-card {
+  @apply bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)];
 }

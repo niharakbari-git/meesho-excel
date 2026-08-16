@@ -5,6 +5,7 @@ import BusinessProfile from './pages/BusinessProfile';
 import TemplateUploader from './pages/TemplateUploader';
 import CatalogueGenerator from './pages/CatalogueGenerator';
 import Preview from './pages/Preview';
+import History from './pages/History';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ function App() {
             <Route path="generator" element={<CatalogueGenerator />} />
             <Route path="preview" element={<Preview />} />
             <Route path="profile" element={<BusinessProfile />} />
+            <Route path="history" element={<History />} />
           </Route>
         </Routes>
       </BrowserRouter>

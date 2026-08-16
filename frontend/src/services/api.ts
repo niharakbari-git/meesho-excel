@@ -36,15 +36,18 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Meesho_Generated_${Date.now()}.xlsx`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    a.remove();
+    return res.json();
+  },
+  getHistory: async () => {
+    const res = await fetch(`${BASE_URL}/history`);
+    return res.json();
+  },
+  getHistoryProfile: async (id: number) => {
+    const res = await fetch(`${BASE_URL}/history/profile/${id}`);
+    return res.json();
+  },
+  downloadHistoryFile: (id: number) => {
+    window.location.href = `${BASE_URL}/history/download/${id}`;
   },
   saveConfig: async (payload: { name: string; configData: any }) => {
     const res = await fetch(`${BASE_URL}/configs`, {
@@ -60,6 +63,18 @@ export const api = {
   },
   getConfigByName: async (name: string) => {
     const res = await fetch(`${BASE_URL}/configs/${encodeURIComponent(name)}`);
+    return res.json();
+  },
+  getPresets: async () => {
+    const res = await fetch(`${BASE_URL}/presets`);
+    return res.json();
+  },
+  savePreset: async (payload: { fieldName: string; fieldValue: string }) => {
+    const res = await fetch(`${BASE_URL}/presets`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
     return res.json();
   }
 };

@@ -7,6 +7,8 @@ import templateRoutes from './routes/templateRoutes';
 import generatorRoutes from './routes/generatorRoutes';
 import exportRoutes from './routes/exportRoutes';
 import configRoutes from './routes/configRoutes';
+import historyRoutes from './routes/historyRoutes';
+import presetRoutes from './routes/presetRoutes';
 
 dotenv.config();
 
@@ -21,6 +23,8 @@ app.use('/api/template', templateRoutes);
 app.use('/api/generator', generatorRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/configs', configRoutes);
+app.use('/api/history', historyRoutes);
+app.use('/api/presets', presetRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

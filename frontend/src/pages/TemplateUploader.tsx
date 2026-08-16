@@ -9,11 +9,11 @@ export default function TemplateUploader() {
   const navigate = useNavigate();
   const setTemplateData = useTemplateStore(s => s.setTemplateData);
 
-  const handleUpload = async () => {
-    if (!file) return;
+  const handleUpload = async (uploadFile: File) => {
+    if (!uploadFile) return;
     setLoading(true);
     try {
-      const res = await api.uploadTemplate(file);
+      const res = await api.uploadTemplate(uploadFile);
       if (res.success) {
         setTemplateData(res.data);
         navigate('/generator');
@@ -27,32 +27,51 @@ export default function TemplateUploader() {
     }
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      handleUpload(selectedFile);
+    }
+  };
+
   return (
-    <div className="max-w-3xl mx-auto space-y-6 mt-10">
-      <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
-        <div className="w-16 h-16 bg-fuchsia-100 dark:bg-fuchsia-900/30 text-fuchsia-600 dark:text-fuchsia-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
-          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="space-y-6 pb-20">
+      <div className="flex flex-col md:flex-row justify-between items-end mb-4">
+        <div>
+           <h2 className="text-3xl font-extrabold text-[#1c1950]">Import Template</h2>
+           <p className="text-slate-500 mt-2 font-medium">Upload your official Meesho catalog Excel file to begin generating data.</p>
+        </div>
+      </div>
+
+      <div className="glass-card p-12 flex flex-col items-center justify-center min-h-[400px] border-dashed border-2 border-slate-200">
+        
+        <div className="w-24 h-24 mb-6 rounded-full bg-indigo-50 flex items-center justify-center shadow-inner">
+          <svg className="w-10 h-10 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Import Meesho Template</h2>
-        <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-md mx-auto">Upload the official Meesho Bulk Upload Excel file. Our smart engine will automatically map all compulsory and optional fields.</p>
         
-        <div className="flex flex-col items-center space-y-4">
+        <div className="relative group cursor-pointer">
+          <button 
+            disabled={loading}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg shadow-indigo-600/30 transition transform hover:-translate-y-1 disabled:opacity-50 disabled:transform-none"
+          >
+            {loading ? 'Analyzing Template...' : 'Select Excel File'}
+          </button>
           <input 
             type="file" 
-            accept=".xlsx" 
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="block w-full max-w-sm text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-fuchsia-50 file:text-fuchsia-700 hover:file:bg-fuchsia-100 dark:file:bg-slate-800 dark:file:text-fuchsia-400"
+            accept=".xlsx,.xls" 
+            onChange={handleFileUpload}
+            disabled={loading}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
           />
-          <button 
-            onClick={handleUpload}
-            disabled={!file || loading}
-            className="w-full max-w-sm bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-medium py-3 px-6 rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? 'Analyzing Template...' : 'Upload & Proceed'}
-          </button>
         </div>
+        
+        <p className="mt-6 text-sm font-semibold text-slate-400 max-w-md text-center">
+          Supported formats: .xlsx. The engine will automatically locate the "Fill This" sheet.
+        </p>
+
       </div>
     </div>
   );
