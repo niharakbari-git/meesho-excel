@@ -1,26 +1,52 @@
-import sqlite3 from 'sqlite3';
-import { open, Database } from 'sqlite';
+import { createClient, Client } from '@libsql/client';
 import path from 'path';
 
 /**
- * TURSO DEPLOYMENT BLOCKER & MIGRATION PATH:
- * Currently, this project uses the `sqlite` and `sqlite3` packages.
- * Turso requires the `@libsql/client` package.
- * To migrate to Turso:
- * 1. Install @libsql/client
- * 2. Replace the initializeDb() logic to create a libSQL client using process.env.TURSO_DB_URL.
- * 3. Replace all instances of `db.get`, `db.run`, `db.all` across controllers to use `client.execute()`.
- *    Note: `client.execute` returns an object where rows are in `result.rows`.
+ * TURSO MIGRATION IMPLEMENTED
+ * We use a wrapper class so we don't have to rewrite 50+ db.get/run/all calls.
  */
+class DBWrapper {
+  private client: Client;
 
-let db: Database | null = null;
+  constructor(client: Client) {
+    this.client = client;
+  }
+
+  async run(sql: string, params: any[] = []) {
+    const result = await this.client.execute({ sql, args: params });
+    return {
+      lastID: Number(result.lastInsertRowid || 0),
+      changes: result.rowsAffected
+    };
+  }
+
+  async all<T = any>(sql: string, params: any[] = []): Promise<T[]> {
+    const result = await this.client.execute({ sql, args: params });
+    return result.rows as unknown as T[];
+  }
+
+  async get<T = any>(sql: string, params: any[] = []): Promise<T | undefined> {
+    const result = await this.client.execute({ sql, args: params });
+    return (result.rows[0] as unknown as T) || undefined;
+  }
+
+  async exec(sql: string) {
+    await this.client.executeMultiple(sql);
+  }
+}
+
+let db: DBWrapper | null = null;
 
 export async function initializeDb() {
-  const dbPath = process.env.SQLITE_DB_PATH || path.join(__dirname, '../../database.sqlite');
-  db = await open({
-    filename: dbPath,
-    driver: sqlite3.Database
+  const url = process.env.TURSO_DB_URL || `file:${path.join(__dirname, '../../database.sqlite')}`;
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+
+  const client = createClient({
+    url,
+    authToken
   });
+
+  db = new DBWrapper(client);
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS profiles (
@@ -54,8 +80,10 @@ export async function initializeDb() {
       templateName TEXT,
       generatedRows INTEGER,
       status TEXT,
-      strategyProfile TEXT
+      strategyProfile TEXT,
+      generation_profile_id INTEGER
     );
+
     CREATE TABLE IF NOT EXISTS generation_profiles (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       mode TEXT,
@@ -70,35 +98,20 @@ export async function initializeDb() {
       originalFilePath TEXT,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     );
-  `);
-  
-  // Safe column add for existing DBs
-  try {
-    await db.exec(`ALTER TABLE files ADD COLUMN strategyProfile TEXT`);
-  } catch (e) {
-    // Column likely already exists
-  }
 
-  try {
-    await db.exec(`ALTER TABLE files ADD COLUMN generation_profile_id INTEGER REFERENCES generation_profiles(id)`);
-  } catch (e) {
-    // Column likely already exists
-  }
-
-  await db.exec(`
     CREATE TABLE IF NOT EXISTS global_field_presets (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       fieldName TEXT UNIQUE,
       fieldValue TEXT,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
+    );
   `);
   
-  console.log('Database initialized');
+  console.log('Database connected via Turso/libSQL');
   return db;
 }
 
-export function getDb(): Database {
+export function getDb() {
   if (!db) {
     throw new Error('Database not initialized');
   }
