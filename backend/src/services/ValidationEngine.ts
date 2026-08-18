@@ -53,7 +53,7 @@ export class ValidationEngine {
              const isReturnsPrice = f.header.toLowerCase().includes('returns') || f.header.toLowerCase().includes('defective');
              
              if (numVal < min || numVal > max) {
-                if (!isReturnsPrice) {
+                if (!isReturnsPrice && !f.configuration.unique) {
                    errors.push({ row: rowIndex, colNumber: f.colNumber, field: f.header, message: `Value ${numVal} is outside allowed range (${min} - ${max}).`, severity: 'error' });
                 }
              }
@@ -72,8 +72,9 @@ export class ValidationEngine {
 
         // Value Pool Validations (assuming template values)
         if (!isValEmpty && f.generationMode === 'VALUE_POOL' && f.configuration?.pool) {
+           const isTitle = f.header.toLowerCase().includes('product name') || f.header.toLowerCase() === 'title';
            const pool = f.configuration.pool.split(',').map((s: string) => s.trim().toLowerCase());
-           if (pool.length > 0 && !pool.includes(val.toString().trim().toLowerCase())) {
+           if (!isTitle && pool.length > 0 && !pool.includes(val.toString().trim().toLowerCase())) {
              errors.push({ row: rowIndex, colNumber: f.colNumber, field: f.header, message: `Value '${val}' is not in the allowed valid template dropdown list.`, severity: 'error' });
            }
         }

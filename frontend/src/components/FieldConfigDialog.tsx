@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTemplateStore, type AnalyzedField } from '../store/useTemplateStore';
 import { api } from '../services/api';
 

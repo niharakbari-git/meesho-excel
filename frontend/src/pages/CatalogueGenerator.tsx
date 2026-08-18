@@ -36,7 +36,7 @@ export default function CatalogueGenerator() {
     }
   });
 
-  const count = watch('count') || 0;
+  // Removed unused count variable
   const imageUrlsStr = watch('imageUrls') || '';
   const parsedImageUrls = imageUrlsStr.split(',').map(s => s.trim()).filter(Boolean);
 

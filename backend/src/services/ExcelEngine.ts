@@ -86,13 +86,6 @@ export class ExcelEngine {
       }
     }
 
-    console.log(`\n--- PARSER DEBUG ---`);
-    console.log(`Sheet Name: ${mainSheet.name}`);
-    console.log(`Anchor (Requirement) Row Index: ${requirementRowIndex}`);
-    console.log(`Field Name Row Index: ${actualFieldsRowIndex}`);
-    console.log(`Description Row Index: ${descriptionRowIndex}`);
-    console.log(`First Data Row: ${dataRowStart}\n`);
-
     const requirementRow = mainSheet.getRow(requirementRowIndex);
     const actualFieldsRow = mainSheet.getRow(actualFieldsRowIndex);
     const columns: any[] = [];

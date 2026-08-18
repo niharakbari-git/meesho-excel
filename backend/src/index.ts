@@ -30,6 +30,16 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Global error handler for production hardening
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('[Global Error]', err.stack || err);
+  const status = err.status || 500;
+  const message = process.env.NODE_ENV === 'production' && status === 500 
+    ? 'Internal Server Error' 
+    : err.message || 'Something went wrong';
+  res.status(status).json({ success: false, message });
+});
+
 async function startServer() {
   try {
     await initializeDb();

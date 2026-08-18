@@ -43,19 +43,35 @@ export class DataGeneratorEngine {
         (mode === 'WORD_COMBO' && !config.words) ||
         (mode === 'AUTO_INCREMENT' && !config.prefix);
 
-      if (isConfigEmpty && globalSettings) {
-        if (field.fieldType === 'SKU' && globalSettings.skuPrefix) {
+      if (isConfigEmpty) {
+        if (globalSettings) {
+          if (field.fieldType === 'SKU' && globalSettings.skuPrefix) {
+            mode = 'AUTO_INCREMENT';
+            config = { prefix: globalSettings.skuPrefix, startNumber: globalSettings.startSku || 1 };
+          } else if (field.fieldType === 'Price' && globalSettings.basePrice) {
+            mode = 'RANDOMIZE';
+            config = { mainValue: globalSettings.basePrice, variation: globalSettings.priceVariation || 0, allowDecimal: false };
+          } else if (field.fieldType === 'Title' && globalSettings.keywords) {
+            mode = 'WORD_COMBO';
+            config = { words: globalSettings.keywords, minWords: 2, maxWords: 4 };
+          } else if (field.fieldType === 'Image' && globalSettings.imageUrls) {
+            mode = 'VALUE_POOL';
+            config = { pool: globalSettings.imageUrls };
+          }
+        }
+        
+        // Critical Fallbacks for Catalog Uniqueness (Meesho Rules)
+        if (headerLower === 'group id' || headerLower.includes('group id')) {
+          if (activeProfile.mode === 'INDEPENDENT_LISTING') {
+            mode = 'AUTO_INCREMENT';
+            config = { prefix: 'GRP-IND-', startNumber: 1 };
+          } else {
+            mode = 'FIXED';
+            config = { value: 'GRP-VAR-001' };
+          }
+        } else if (headerLower === 'style id' || headerLower.includes('product id')) {
           mode = 'AUTO_INCREMENT';
-          config = { prefix: globalSettings.skuPrefix, startNumber: globalSettings.startSku || 1 };
-        } else if (field.fieldType === 'Price' && globalSettings.basePrice) {
-          mode = 'RANDOMIZE';
-          config = { mainValue: globalSettings.basePrice, variation: globalSettings.priceVariation || 0, allowDecimal: false };
-        } else if (field.fieldType === 'Title' && globalSettings.keywords) {
-          mode = 'WORD_COMBO';
-          config = { words: globalSettings.keywords, minWords: 2, maxWords: 4 };
-        } else if (field.fieldType === 'Image' && globalSettings.imageUrls) {
-          mode = 'VALUE_POOL';
-          config = { pool: globalSettings.imageUrls };
+          config = { prefix: 'PRD-', startNumber: 1 };
         }
       }
 

@@ -2,11 +2,23 @@ import sqlite3 from 'sqlite3';
 import { open, Database } from 'sqlite';
 import path from 'path';
 
+/**
+ * TURSO DEPLOYMENT BLOCKER & MIGRATION PATH:
+ * Currently, this project uses the `sqlite` and `sqlite3` packages.
+ * Turso requires the `@libsql/client` package.
+ * To migrate to Turso:
+ * 1. Install @libsql/client
+ * 2. Replace the initializeDb() logic to create a libSQL client using process.env.TURSO_DB_URL.
+ * 3. Replace all instances of `db.get`, `db.run`, `db.all` across controllers to use `client.execute()`.
+ *    Note: `client.execute` returns an object where rows are in `result.rows`.
+ */
+
 let db: Database | null = null;
 
 export async function initializeDb() {
+  const dbPath = process.env.SQLITE_DB_PATH || path.join(__dirname, '../../database.sqlite');
   db = await open({
-    filename: path.join(__dirname, '../../database.sqlite'),
+    filename: dbPath,
     driver: sqlite3.Database
   });
 

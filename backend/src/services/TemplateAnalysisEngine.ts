@@ -97,35 +97,6 @@ export class TemplateAnalysisEngine {
     });
 
     // Helper for converting column number to letter
-    const colLetter = (colNum: number) => {
-      let temp, letter = '';
-      while (colNum > 0) {
-        temp = (colNum - 1) % 26;
-        letter = String.fromCharCode(temp + 65) + letter;
-        colNum = (colNum - temp - 1) / 26;
-      }
-      return letter;
-    };
-
-    analyzed.forEach(col => {
-      console.log(`Column ${colLetter(col.colNumber)}`);
-      console.log(`Field Name: ${col.header}`);
-      console.log(`Required: ${col.required}`);
-      if (col.description) {
-        console.log(`Description: ${col.description}`);
-      }
-      console.log(`Detected Type: ${col.fieldType}`);
-      console.log('-'.repeat(50));
-    });
-
-    console.log('\nFINAL PARSED METADATA (JSON):');
-    const jsonOutput = analyzed.map(a => ({
-       name: a.header,
-       required: a.required,
-       type: a.fieldType
-    }));
-    console.log(JSON.stringify(jsonOutput, null, 2));
-
     return analyzed;
   }
 }

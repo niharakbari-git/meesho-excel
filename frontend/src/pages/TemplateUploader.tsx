@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import { useTemplateStore } from '../store/useTemplateStore';
 
 export default function TemplateUploader() {
-  const [file, setFile] = useState<File | null>(null);
+  // Removed unused file state
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const setTemplateData = useTemplateStore(s => s.setTemplateData);
@@ -30,7 +30,6 @@ export default function TemplateUploader() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      setFile(selectedFile);
       handleUpload(selectedFile);
     }
   };
