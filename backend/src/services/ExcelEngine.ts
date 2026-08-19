@@ -1,4 +1,5 @@
 import ExcelJS from 'exceljs';
+import { getDb } from '../database/db';
 
 function extractString(val: any): string {
   if (val === null || val === undefined) return '';
@@ -12,9 +13,28 @@ function extractString(val: any): string {
 }
 
 export class ExcelEngine {
-  async parseTemplate(filePath: string) {
+  async parseTemplate(file: string | Buffer) {
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.readFile(filePath);
+    if (Buffer.isBuffer(file)) {
+      await workbook.xlsx.load(file as any);
+    } else {
+      let finalPath = file as string;
+      if (finalPath.startsWith('db://')) {
+        const fileId = parseInt(finalPath.replace('db://', ''));
+        const db = getDb();
+        const row = await db.get(`SELECT fileData FROM template_files WHERE id = ?`, [fileId]);
+        if (!row || !row.fileData) throw new Error('Template file not found in database');
+        await workbook.xlsx.load(Buffer.from(row.fileData as any) as any);
+      } else {
+        const fs = require('fs');
+        const path = require('path');
+        if (!fs.existsSync(finalPath)) {
+          const normalizedPath = finalPath.replace(/\\/g, '/');
+          finalPath = path.join(__dirname, '../../uploads', path.basename(normalizedPath));
+        }
+        await workbook.xlsx.readFile(finalPath);
+      }
+    }
     
     let mainSheet = workbook.worksheets.find(ws => ws.name.toLowerCase().includes('fill this') && ws.state === 'visible');
     if (!mainSheet) {
@@ -136,15 +156,25 @@ export class ExcelEngine {
 
   async fillAndExport(filePath: string, sheetName: string, headerRowIndex: number, rowsData: any[], dataRowStart?: number): Promise<Buffer> {
     const workbook = new ExcelJS.Workbook();
-    let finalPath = filePath;
-    const fs = require('fs');
-    const path = require('path');
-    if (!fs.existsSync(finalPath)) {
-      // Normalize slashes for cross-platform compatibility (Windows \ to Linux /)
-      const normalizedPath = filePath.replace(/\\/g, '/');
-      finalPath = path.join(__dirname, '../../uploads', path.basename(normalizedPath));
+    
+    if (filePath.startsWith('db://')) {
+      const fileId = parseInt(filePath.replace('db://', ''));
+      const db = getDb();
+      const row = await db.get(`SELECT fileData FROM template_files WHERE id = ?`, [fileId]);
+      if (!row || !row.fileData) throw new Error('Template file not found in database');
+      await workbook.xlsx.load(Buffer.from(row.fileData as any) as any);
+    } else {
+      let finalPath = filePath;
+      const fs = require('fs');
+      const path = require('path');
+      if (!fs.existsSync(finalPath)) {
+        // Normalize slashes for cross-platform compatibility (Windows \ to Linux /)
+        const normalizedPath = filePath.replace(/\\/g, '/');
+        finalPath = path.join(__dirname, '../../uploads', path.basename(normalizedPath));
+      }
+      await workbook.xlsx.readFile(finalPath);
     }
-    await workbook.xlsx.readFile(finalPath);
+    
     const sheet = workbook.worksheets.find(ws => ws.name === sheetName) || workbook.worksheets[0];
 
     const startRow = dataRowStart ? dataRowStart : (headerRowIndex + 1);

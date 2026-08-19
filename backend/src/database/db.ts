@@ -105,6 +105,13 @@ export async function initializeDb() {
       fieldValue TEXT,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS template_files (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      filename TEXT,
+      fileData BLOB,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `);
   
   console.log('Database connected via Turso/libSQL');
