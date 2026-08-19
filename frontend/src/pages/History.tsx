@@ -49,7 +49,7 @@ export default function History() {
           headerRowIndex: p.headerRowIndex,
           dataRowStart: p.dataRowStart
         });
-        navigate('/generator'); // We might want to pass globalSettings in state, but UI form resets. The user will be at least able to re-generate fields.
+        navigate('/generator', { state: { globalSettings: p.globalSettings ? JSON.parse(p.globalSettings) : null } });
       } else {
         alert(res.message || 'Profile not found');
       }

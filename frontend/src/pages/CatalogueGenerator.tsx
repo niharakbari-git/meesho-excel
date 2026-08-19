@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { useTemplateStore, type AnalyzedField } from '../store/useTemplateStore';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { FieldConfigDialog } from '../components/FieldConfigDialog';
 
@@ -12,8 +12,11 @@ export default function CatalogueGenerator() {
   const generationMode = useTemplateStore(s => s.generationMode);
   const setGenerationMode = useTemplateStore(s => s.setGenerationMode);
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const applySavedProfile = useTemplateStore(s => s.applySavedProfile);
+  
+  const savedSettings = location.state?.globalSettings || {};
   
   const { data: configsData } = useQuery({
     queryKey: ['configs'],
@@ -25,14 +28,14 @@ export default function CatalogueGenerator() {
 
   const { register, handleSubmit, watch, setValue } = useForm({
     defaultValues: {
-      count: 10,
-      skuPrefix: '',
-      startSku: 1,
-      basePrice: 0,
-      priceVariation: 0,
-      keywords: '',
-      imageUrls: '',
-      adjectivePool: ''
+      count: savedSettings.count ?? 10,
+      skuPrefix: savedSettings.skuPrefix || '',
+      startSku: savedSettings.startSku ?? 1,
+      basePrice: savedSettings.basePrice ?? 0,
+      priceVariation: savedSettings.priceVariation ?? 0,
+      keywords: savedSettings.keywords || '',
+      imageUrls: savedSettings.imageUrls || '',
+      adjectivePool: savedSettings.adjectivePool || ''
     }
   });
 

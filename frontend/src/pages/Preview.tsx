@@ -142,7 +142,7 @@ export default function Preview() {
                  className="bg-transparent outline-none text-[#1c1950] font-semibold text-sm w-full"
                />
             </div>
-            <button onClick={() => navigate('/generator')} className="text-slate-600 hover:text-[#1c1950] font-medium px-4 transition border-l border-slate-200">
+             <button onClick={() => navigate('/generator', { state: { globalSettings: location.state?.globalSettings } })} className="text-slate-600 hover:text-[#1c1950] font-medium px-4 transition border-l border-slate-200">
               Edit Strategy
             </button>
             <button 
