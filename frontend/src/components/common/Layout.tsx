@@ -26,6 +26,7 @@ export default function Layout() {
             <Link to="/history" className={navLinkClass('/history')}>Files & History</Link>
             <Link to="/profile" className={navLinkClass('/profile')}>Business Profile</Link>
             <Link to="/faq" className={navLinkClass('/faq')}>FAQ & Cautions</Link>
+            <Link to="/prompts" className={navLinkClass('/prompts')}>AI Prompts</Link>
           </div>
         </div>
       </nav>
