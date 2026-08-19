@@ -48,10 +48,11 @@ export class ExportController {
       );
       const profileId = insertProfileResult.lastID;
 
+      const normalizedPath = filePath.replace(/\\/g, '/');
       const result = await db.run(
         `INSERT INTO files (originalFilename, originalPath, generatedFilename, generatedPath, templateName, generatedRows, status, strategyProfile, generation_profile_id)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [originalFilename || path.basename(filePath), filePath, generatedFilename, generatedPath, sheetName, rows.length, 'GENERATED', req.body.profile ? JSON.stringify(req.body.profile) : null, profileId]
+        [originalFilename || path.basename(normalizedPath), filePath, generatedFilename, generatedPath, sheetName, rows.length, 'GENERATED', req.body.profile ? JSON.stringify(req.body.profile) : null, profileId]
       );
       
       res.json({ success: true, fileId: result.lastID, filename: generatedFilename });

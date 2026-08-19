@@ -140,7 +140,9 @@ export class ExcelEngine {
     const fs = require('fs');
     const path = require('path');
     if (!fs.existsSync(finalPath)) {
-      finalPath = path.join(__dirname, '../../uploads', path.basename(filePath));
+      // Normalize slashes for cross-platform compatibility (Windows \ to Linux /)
+      const normalizedPath = filePath.replace(/\\/g, '/');
+      finalPath = path.join(__dirname, '../../uploads', path.basename(normalizedPath));
     }
     await workbook.xlsx.readFile(finalPath);
     const sheet = workbook.worksheets.find(ws => ws.name === sheetName) || workbook.worksheets[0];
