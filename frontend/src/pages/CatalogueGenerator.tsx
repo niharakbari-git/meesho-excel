@@ -41,7 +41,7 @@ export default function CatalogueGenerator() {
 
   // Removed unused count variable
   const imageUrlsStr = watch('imageUrls') || '';
-  const parsedImageUrls = imageUrlsStr.split(',').map(s => s.trim()).filter(Boolean);
+  const parsedImageUrls = imageUrlsStr.split(',').map((s: string) => s.trim()).filter(Boolean);
 
   const handleSaveProfile = async () => {
     const name = window.prompt("Enter a name for this Settings Profile:");
@@ -293,7 +293,7 @@ export default function CatalogueGenerator() {
                <span className="text-sm font-semibold text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full">{parsedImageUrls.length} images provided</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {parsedImageUrls.map((url, i) => (
+              {parsedImageUrls.map((url: string, i: number) => (
                 <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-white">
                    <img src={url} alt={`Preview ${i}`} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onError={(e) => (e.currentTarget.src = 'https://placehold.co/400x400/f8f7fb/64748b?text=Invalid+Image')} />
                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
