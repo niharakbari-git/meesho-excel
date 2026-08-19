@@ -32,7 +32,7 @@ export default function CatalogueGenerator() {
       priceVariation: 0,
       keywords: '',
       imageUrls: '',
-      adjectivePool: 'Traditional, Stylish, Elegant, Modern, Classic, Handcrafted, Premium'
+      adjectivePool: ''
     }
   });
 
